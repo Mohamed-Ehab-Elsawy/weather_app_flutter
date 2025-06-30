@@ -1,53 +1,48 @@
 import 'package:flutter/material.dart';
-import '../data/model/weather_info.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:weather_app/cubit/fetch_weather_info_cubit.dart';
 
 class WeatherInfoSection extends StatelessWidget {
-  final WeatherInfo weatherInfo;
-
-  const WeatherInfoSection({super.key, required this.weatherInfo});
+  const WeatherInfoSection({super.key});
 
   @override
-  Widget build(BuildContext context) => Column(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: [
-      Text(
-        weatherInfo.cityName ?? "",
-        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40),
-      ),
-      Text(
-        'Last update: ${weatherInfo.lastUpdate}',
-        style: TextStyle(fontSize: 24),
-      ),
-      const SizedBox(height: 50),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          weatherInfo.imageUrl == null
-              ? Image.asset('assets/images/clear.png')
-              : Image.network(weatherInfo.imageUrl!),
-          Text(
-            '${weatherInfo.temperature}° C',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 32),
-          ),
-          Column(
-            children: [
-              Text(
-                'Max temp: ${weatherInfo.maxTemperature}° C',
-                style: TextStyle(fontSize: 18),
-              ),
-              Text(
-                'Min temp: ${weatherInfo.minTemperature}° C',
-                style: TextStyle(fontSize: 18),
-              ),
-            ],
-          ),
-        ],
-      ),
-      const SizedBox(height: 50),
-      Text(
-        weatherInfo.status ?? "",
-        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 32),
-      ),
-    ],
-  );
+  Widget build(BuildContext context) {
+    var weatherInfo =
+        BlocProvider.of<FetchWeatherInfoCubit>(context).weatherResponse;
+    var lastUpdate = weatherInfo.currentWeather!.lastUpdated!;
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          weatherInfo.location?.name ?? "",
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40),
+        ),
+        const SizedBox(height: 16),
+        Text(
+          'Last update: ${lastUpdate.hour}:${lastUpdate.minute}',
+          style: TextStyle(fontSize: 24),
+        ),
+        const SizedBox(height: 50),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            weatherInfo.currentWeather?.condition?.icon != null
+                ? Image.network(
+                  'https:${weatherInfo.currentWeather?.condition!.icon!}',
+                )
+                : Image.asset('assets/images/clear.png'),
+            Text(
+              '${weatherInfo.currentWeather?.tempC}° C',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 32),
+            ),
+          ],
+        ),
+        const SizedBox(height: 50),
+        Text(
+          weatherInfo.currentWeather?.condition?.text ?? "",
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 32),
+        ),
+      ],
+    );
+  }
 }

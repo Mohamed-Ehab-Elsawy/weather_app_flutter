@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
-class SearchSection extends StatelessWidget {
-  const SearchSection({super.key});
+class SearchTextField extends StatelessWidget {
+  final ValueChanged<String>? onSubmitted;
+  final ValueChanged<String>? onChanged;
+
+  const SearchTextField({super.key, this.onSubmitted, this.onChanged});
 
   @override
   Widget build(BuildContext context) => Padding(
@@ -14,9 +17,12 @@ class SearchSection extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           borderSide: BorderSide.none,
         ),
-        suffixIcon: const Icon(Icons.search_rounded),
-        hintText: 'City Search',
+        hintText: 'City name',
       ),
+      onChanged: onChanged,
+      onSubmitted: onSubmitted,
+      textInputAction: TextInputAction.search,
+      keyboardType: TextInputType.text,
     ),
   );
 }

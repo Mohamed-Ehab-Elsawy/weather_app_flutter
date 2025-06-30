@@ -1,48 +1,68 @@
 import 'package:flutter/material.dart';
-import 'package:weather_app/screens/search_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:weather_app/cubit/fetch_weather_info_cubit.dart';
+import 'package:weather_app/cubit/fetch_weather_info_states.dart';
+import 'package:weather_app/widgets/no_weather_info.dart';
+import 'package:weather_app/widgets/weather_app_bar.dart';
+import 'package:weather_app/widgets/weather_error_section.dart';
+import 'package:weather_app/widgets/weather_info_section.dart';
 
-import '../data/model/weather_info.dart';
-import '../widgets/weather_info_section.dart';
+import '../widgets/animated_search_field.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  bool _showSearch = false;
+
+  @override
   Widget build(BuildContext ctx) => Scaffold(
-    appBar: AppBar(
-      title: const Text(
-        'Weather App',
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          color: Colors.white,
-          fontSize: 24,
-        ),
-      ),
-      backgroundColor: Colors.blue,
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.search_rounded, color: Colors.white, size: 32),
-          onPressed: () {
-            Navigator.push(
-              ctx,
-              MaterialPageRoute(builder: (ctx) => const SearchScreen()),
-            );
-          },
-        ),
-      ],
+    appBar: WeatherAppBar(
+      onSearchIconPressed: () {
+        setState(() {
+          _showSearch = !_showSearch;
+        });
+      },
     ),
-    body: Center(
-      child: WeatherInfoSection(
-        weatherInfo: WeatherInfo(
-          cityName: 'Cairo',
-          lastUpdate: '08:00 AM',
-          temperature: 40,
-          maxTemperature: 42,
-          minTemperature: 30,
-          status: 'Sunny',
-          imageUrl: 'https://openweathermap.org/img/wn/01d@2x.png',
-        ),
-      ),
+    body: BlocBuilder<FetchWeatherInfoCubit, FetchWeatherInfoStates>(
+      builder: (context, state) {
+        return Column(
+          children: [
+            AnimatedSearchField(
+              isVisible: _showSearch,
+              onSubmitted: (value) {
+                BlocProvider.of<FetchWeatherInfoCubit>(
+                  context,
+                ).fetchWeatherInfo(value);
+                setState(() {
+                  _showSearch = !_showSearch;
+                });
+              },
+            ),
+            switch (state) {
+              FetchWeatherInfoStates.initial => Expanded(
+                child: NoWeatherInfo(),
+              ),
+
+              FetchWeatherInfoStates.loading => Expanded(
+                child: Center(child: CircularProgressIndicator()),
+              ),
+
+              FetchWeatherInfoStates.success => Expanded(
+                child: WeatherInfoSection(),
+              ),
+
+              FetchWeatherInfoStates.failure => Expanded(
+                child: WeatherErrorSection(),
+              ),
+            },
+          ],
+        );
+      },
     ),
   );
 }

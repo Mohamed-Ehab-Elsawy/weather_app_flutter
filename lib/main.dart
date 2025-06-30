@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:weather_app/cubit/fetch_weather_info_cubit.dart';
 import 'package:weather_app/screens/home_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -11,5 +13,9 @@ class WeatherApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) =>
-      const MaterialApp(debugShowCheckedModeBanner: false, home: HomeScreen());
+      BlocProvider(
+        create: (context) => FetchWeatherInfoCubit(),
+        child: MaterialApp(
+            debugShowCheckedModeBanner: false, home: HomeScreen()),
+      );
 }
