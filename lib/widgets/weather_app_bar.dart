@@ -14,14 +14,12 @@ class WeatherAppBar extends StatelessWidget implements PreferredSizeWidget {
       'Weather App',
       style: TextStyle(
         fontWeight: FontWeight.bold,
-        color: Colors.white,
         fontSize: 24,
       ),
     ),
-    backgroundColor: Colors.blue,
     actions: [
       IconButton(
-        icon: const Icon(Icons.search_rounded, color: Colors.white, size: 32),
+        icon: const Icon(Icons.search_rounded, size: 32),
         onPressed: onSearchIconPressed,
       ),
     ],

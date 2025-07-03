@@ -9,7 +9,7 @@ import 'package:weather_app/data/model/weather_response.dart';
 class FetchWeatherInfoCubit extends Cubit<FetchWeatherInfoStates> {
   FetchWeatherInfoCubit() : super(FetchWeatherInfoStates.initial);
   final WeatherServices _services = WeatherServices();
-  late WeatherResponse weatherResponse;
+  WeatherResponse? weatherResponse;
   late ResponseError error;
 
   fetchWeatherInfo(String city) async {

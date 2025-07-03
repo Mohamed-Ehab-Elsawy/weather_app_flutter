@@ -29,40 +29,39 @@ class _HomeScreenState extends State<HomeScreen> {
       },
     ),
     body: BlocBuilder<FetchWeatherInfoCubit, FetchWeatherInfoStates>(
-      builder: (context, state) {
-        return Column(
-          children: [
-            AnimatedSearchField(
-              isVisible: _showSearch,
-              onSubmitted: (value) {
-                BlocProvider.of<FetchWeatherInfoCubit>(
-                  context,
-                ).fetchWeatherInfo(value);
-                setState(() {
-                  _showSearch = !_showSearch;
-                });
+      builder:
+          (context, state) => Column(
+            children: [
+              AnimatedSearchField(
+                isVisible: _showSearch,
+                onSubmitted: (value) {
+                  BlocProvider.of<FetchWeatherInfoCubit>(
+                    context,
+                  ).fetchWeatherInfo(value);
+                  setState(() {
+                    _showSearch = !_showSearch;
+                  });
+                },
+              ),
+              switch (state) {
+                FetchWeatherInfoStates.initial => const Expanded(
+                  child: NoWeatherInfo(),
+                ),
+
+                FetchWeatherInfoStates.loading => const Expanded(
+                  child: Center(child: CircularProgressIndicator()),
+                ),
+
+                FetchWeatherInfoStates.success => Expanded(
+                  child: WeatherInfoSection(),
+                ),
+
+                FetchWeatherInfoStates.failure => const Expanded(
+                  child: WeatherErrorSection(),
+                ),
               },
-            ),
-            switch (state) {
-              FetchWeatherInfoStates.initial => Expanded(
-                child: NoWeatherInfo(),
-              ),
-
-              FetchWeatherInfoStates.loading => Expanded(
-                child: Center(child: CircularProgressIndicator()),
-              ),
-
-              FetchWeatherInfoStates.success => Expanded(
-                child: WeatherInfoSection(),
-              ),
-
-              FetchWeatherInfoStates.failure => Expanded(
-                child: WeatherErrorSection(),
-              ),
-            },
-          ],
-        );
-      },
+            ],
+          ),
     ),
   );
 }
